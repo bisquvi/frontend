@@ -1,0 +1,117 @@
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 250px;
+    height: 100%;
+    background-color: var(--primary-color);
+    color: #ffffff;
+    padding: 20px;
+    transition: left 0.3s ease;
+    z-index: 999;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
+}
+
+.sidebar.open {
+    left: 0;
+}
+
+.hamburger-icon {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    font-size: 28px;
+    cursor: pointer;
+    color: #333;
+    z-index: 1000;
+    transition: left 0.3s ease, color 0.3s ease;
+}
+
+.hamburger-icon.menu-open {
+    left: 270px;
+    color: var(--primary-color);
+}
+
+.back-button {
+    display: block;
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    background-color: var(--secondary-color);
+    color: #333;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 65%;
+}
+
+.back-button:hover {
+    background-color: #49a29f;
+    transform: scale(1.05);
+}
+
+.sidebar h3 {
+    margin-top: 0;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #333;
+    border-bottom: 2px solid var(--secondary-color);
+    padding-bottom: 10px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar ul li {
+    padding: 10px 15px;
+    color: #333;
+    margin: 5px 0;
+    background-color: var(--secondary-color);
+    /* Slightly darker purple */
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.sidebar ul li:hover {
+    background-color: #4a4353;
+    /* Darker purple */
+    transform: translateX(10px);
+}
+
+.sidebar ul li ul {
+    list-style: circle;
+    padding-left: 20px;
+    margin-top: 10px;
+}
+
+.sidebar ul li ul li {
+    background-color: transparent;
+    color: #333;
+    padding: 5px;
+    margin: 0;
+    transition: color 0.2s ease;
+}
+
+.sidebar ul li ul li:hover {
+    color: #ffffff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .hamburger-icon.menu-open {
+        left: 210px;
+    }
+}

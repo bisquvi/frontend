@@ -1,0 +1,39 @@
+:root {
+    --primary-color: #5b5475;
+    /* Default Purple */
+    --secondary-color: #86f0e7;
+    /* Default Green */
+    --text-color: #333333;
+    --background-color: #f5f5f5;
+}
+
+.layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--background-color);
+}
+
+.page-content {
+    flex: 1;
+    padding: 20px;
+    background-color: #ffffff;
+    color: var(--text-color);
+    overflow-y: auto;
+}
+
+.page-content h1 {
+    font-size: 2rem;
+    color: var(--primary-color);
+}
+
+.main-content {
+    display: flex;
+    flex: 1;
+}
+
+.page-content p {
+    font-size: 1rem;
+    color: #495057;
+    line-height: 1.6;
+}
