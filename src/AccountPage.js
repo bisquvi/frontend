@@ -1,11 +1,17 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from './Layout';
 
-const AccountPage = ({ isLoggedIn, setIsLoggedIn, currentEmail }) => {
+const AccountPage = ({ isLoggedIn, setIsLoggedIn }) => {
+    const [currentEmail, setCurrentEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [email, setEmail] = useState('');    
+    const [newEmail, setNewEmail] = useState('');
 
+    useEffect(() => {
+        const userInfo = JSON.parse(localStorage.getItem('user'));
+        if (userInfo && userInfo.email) {
+            setCurrentEmail(userInfo.email);
+        }
+    }, []);
 
     const handlePasswordUpdate = async () => {
         try {
@@ -13,13 +19,10 @@ const AccountPage = ({ isLoggedIn, setIsLoggedIn, currentEmail }) => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    email: email,
-                
+                    email: currentEmail, 
                     newPassword: password,
                 }),
-                
             });
-            console.log(currentEmail);
 
             const data = await response.json();
 
@@ -32,6 +35,33 @@ const AccountPage = ({ isLoggedIn, setIsLoggedIn, currentEmail }) => {
         } catch (error) {
             console.error('Şifre güncellenirken bir hata oluştu:', error);
             alert('Şifre güncellenirken bir hata oluştu.');
+        }
+    };
+
+    const handleEmailUpdate = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/update-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    oldEmail: currentEmail, 
+                    newEmail: newEmail,     
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert('Email başarıyla güncellendi!');
+                setCurrentEmail(newEmail); 
+                localStorage.setItem('user', JSON.stringify({ email: newEmail })); 
+                setNewEmail('');
+            } else {
+                alert(`Hata: ${data.message}`);
+            }
+        } catch (error) {
+            console.error('Email güncellenirken bir hata oluştu:', error);
+            alert('Email güncellenirken bir hata oluştu.');
         }
     };
 
@@ -51,10 +81,7 @@ const AccountPage = ({ isLoggedIn, setIsLoggedIn, currentEmail }) => {
                             onChange={(e) => setPassword(e.target.value)}
                             style={styles.input}
                         />
-                        <button
-                            onClick={handlePasswordUpdate}
-                            style={styles.button}
-                        >
+                        <button onClick={handlePasswordUpdate} style={styles.button}>
                             Güncelle
                         </button>
                     </div>
@@ -67,9 +94,11 @@ const AccountPage = ({ isLoggedIn, setIsLoggedIn, currentEmail }) => {
                         <input
                             type="email"
                             placeholder="Yeni E-Posta"
+                            value={newEmail}
+                            onChange={(e) => setNewEmail(e.target.value)}
                             style={styles.input}
                         />
-                        <button style={styles.button}>
+                        <button onClick={handleEmailUpdate} style={styles.button}>
                             Güncelle
                         </button>
                     </div>

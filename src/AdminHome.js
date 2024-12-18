@@ -76,7 +76,7 @@ const AdminHome = () => {
       alert("Yeni admin başarıyla eklendi!");
       setNewAdminUsername("");
       setNewAdminPassword("");
-      setSelectedTab("users"); // Kullanıcıları tekrar listele
+      setSelectedTab("users"); 
     } catch (error) {
       console.error("Admin eklenemedi:", error);
     }
@@ -166,7 +166,7 @@ const AdminHome = () => {
                 Admin Ekle
               </button>
             </div>
-          ) : selectedTab === "otherManagement" ? (
+          ) : selectedTab === "otherManagement" ? ( //burası böyle kaldı belki silebiliriz
             <p>Diğer yönetim alanı</p>
           ) : (
             <p></p>

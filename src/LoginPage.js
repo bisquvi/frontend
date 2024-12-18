@@ -63,10 +63,9 @@ const LoginPage = ({ setIsLoggedIn }) => {
         }
     };
     
-    // Kullanıcı bilgisini localStorage'a kaydeden fonksiyon
     const saveUserInfo = (email) => {
         try {
-            const userInfo = { email: email, password: password, loginDate: new Date().toISOString() };
+            const userInfo = { email: email, password: password};
             localStorage.setItem('user', JSON.stringify(userInfo));
             console.log('Kullanıcı bilgisi kaydedildi:', userInfo);
         } catch (err) {
