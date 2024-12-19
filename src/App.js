@@ -10,6 +10,7 @@ import FavoritesPage from './FavoritesPage';
 import Header from './Header';
 import AdminHome from './AdminHome';
 import AdminPage from './AdminPage';
+import ProductPage from './ProductPage';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -70,6 +71,7 @@ const App = () => {
           path="/login"
           element={<LoginPage setIsLoggedIn={setIsLoggedIn} />}
         />
+
         <Route
           path="/signup"
           element={<SignupPage setIsLoggedIn={setIsLoggedIn} />}
@@ -107,6 +109,16 @@ const App = () => {
               <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
               <CategoryPage />
             </>
+          }
+        />
+
+        <Route
+          path='/products/:productId'
+          element = {
+            <>
+              <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+              <ProductPage isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>
+              </>
           }
         />
       </Routes>

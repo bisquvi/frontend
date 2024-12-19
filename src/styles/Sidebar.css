@@ -35,6 +35,7 @@
 
 .back-button {
     display: block;
+    
     margin-bottom: 20px;
     padding: 10px 15px;
     background-color: var(--secondary-color);
@@ -44,13 +45,15 @@
     cursor: pointer;
     text-align: center;
     text-transform: uppercase;
+    font-size: smaller;
     font-weight: bold;
     transition: background-color 0.3s ease, transform 0.2s ease;
-    width: 65%;
+    width: 35%;
+    margin-left: auto;
 }
 
 .back-button:hover {
-    background-color: #49a29f;
+    background-color: #aab6ec;
     transform: scale(1.05);
 }
 
@@ -82,7 +85,7 @@
 }
 
 .sidebar ul li:hover {
-    background-color: #4a4353;
+    background-color: #aab6ec;
     /* Darker purple */
     transform: translateX(10px);
 }

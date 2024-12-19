@@ -122,7 +122,7 @@ const AdminHome = () => {
           onMouseLeave={handleMouseLeave}
           onClick={() => setSelectedTab("otherManagement")}
         >
-          Diğer Yönetimler
+          User Logs
         </button>
       </div>
       <div style={styles.mainContent}>
@@ -166,8 +166,8 @@ const AdminHome = () => {
                 Admin Ekle
               </button>
             </div>
-          ) : selectedTab === "otherManagement" ? ( //burası böyle kaldı belki silebiliriz
-            <p>Diğer yönetim alanı</p>
+          ) : selectedTab === "otherManagement" ? ( 
+            <p>User Logs</p>
           ) : (
             <p></p>
           )}

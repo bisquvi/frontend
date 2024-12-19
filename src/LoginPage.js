@@ -28,10 +28,10 @@ const LoginPage = ({ setIsLoggedIn }) => {
 
     const handleLogin = async () => {
         if (!email.trim() || !password.trim()) {
-            setError('Şifre ve kullanıcı adı boş bırakılamaz.');
+            setError('E-posta ve şifre boş bırakılamaz.');
             return;
         }
-    
+
         try {
             const response = await fetch('http://localhost:5000/login', {
                 method: 'POST',
@@ -40,38 +40,34 @@ const LoginPage = ({ setIsLoggedIn }) => {
                 },
                 body: JSON.stringify({ email, password }),
             });
-    
+
             const data = await response.json();
-    
-            console.log('Response:', response);
-            console.log('Data:', data); 
-    
-            if (response.ok) {
+
+            if (response.ok && data.message === 'Login başarılı.') {
                 setError('');
                 setIsLoggedIn(true);
-    
-                // Kullanıcı bilgilerini localStorage'a kaydet
-                saveUserInfo(email);
-    
+                localStorage.setItem('user', JSON.stringify({ email }));
                 navigate('/');
             } else {
-                setError(data.message || 'Kullanıcı adı veya şifre yanlış.');
+                setError(data.error || 'Geçersiz e-posta veya şifre.');
             }
         } catch (err) {
-            console.error('Error during login:', err); 
-            setError('Sunucuyla bağlantı kurulamadı.');
+            console.error('Login işlemi sırasında hata oluştu:', err);
+            setError('Sunucuyla bağlantı kurulamadı. Lütfen daha sonra tekrar deneyin.');
         }
     };
     
-    const saveUserInfo = (email) => {
-        try {
-            const userInfo = { email: email, password: password};
-            localStorage.setItem('user', JSON.stringify(userInfo));
-            console.log('Kullanıcı bilgisi kaydedildi:', userInfo);
-        } catch (err) {
-            console.error('Kullanıcı bilgisi kaydedilemedi:', err);
-        }
-    };
+
+    
+    // const saveUserInfo = (email) => {
+    //     try {
+    //         const userInfo = { email: email, password: password};
+    //         localStorage.setItem('user', JSON.stringify(userInfo));
+    //         console.log('Kullanıcı bilgisi kaydedildi:', userInfo);
+    //     } catch (err) {
+    //         console.error('Kullanıcı bilgisi kaydedilemedi:', err);
+    //     }
+    // };
     
 
     return (

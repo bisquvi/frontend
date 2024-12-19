@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Layout from './Layout';
+import { useNavigate } from 'react-router-dom';
+
 
 const AccountPage = ({ isLoggedIn, setIsLoggedIn }) => {
     const [currentEmail, setCurrentEmail] = useState('');
     const [password, setPassword] = useState('');
     const [newEmail, setNewEmail] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         const userInfo = JSON.parse(localStorage.getItem('user'));
@@ -65,6 +68,39 @@ const AccountPage = ({ isLoggedIn, setIsLoggedIn }) => {
         }
     };
 
+
+    const handleAccountDelete = async () => {
+        const confirmDelete = window.confirm(
+            'Hesabınızı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!'
+        );
+    
+        if (!confirmDelete) {
+            return;
+        }
+    
+        try {
+            const response = await fetch('http://localhost:5000/delete-account', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: currentEmail }),
+            });
+    
+            const data = await response.json();
+    
+            if (response.ok) {
+                alert('Hesabınız başarıyla silindi.');
+                localStorage.removeItem('user'); 
+                setIsLoggedIn(false); 
+                navigate('/');
+            } else {
+                alert(`Hata: ${data.message}`);
+            }
+        } catch (error) {
+            console.error('Hesap silinirken bir hata oluştu:', error);
+            alert('Hesap silinirken bir hata oluştu.');
+        }
+    };
+    
     return (
         <Layout isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}>
             <div style={styles.container}>
@@ -104,23 +140,8 @@ const AccountPage = ({ isLoggedIn, setIsLoggedIn }) => {
                     </div>
                 </div>
 
-                {/* Kullanıcı Adını Güncelleme Bölümü */}
-                <div style={styles.section}>
-                    <h3>Kullanıcı Adını Güncelle</h3>
-                    <div style={styles.inputContainer}>
-                        <input
-                            type="text"
-                            placeholder="Yeni Kullanıcı Adı"
-                            style={styles.input}
-                        />
-                        <button style={styles.button}>
-                            Güncelle
-                        </button>
-                    </div>
-                </div>
-
                 {/* Hesabı Silme Butonu */}
-                <button style={styles.deleteButton}>
+                <button onClick = {handleAccountDelete} style={styles.deleteButton}>
                     Hesabı Sil
                 </button>
             </div>
