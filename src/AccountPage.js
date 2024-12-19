@@ -22,7 +22,7 @@ const AccountPage = ({ isLoggedIn, setIsLoggedIn }) => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    email: currentEmail, 
+                    email: currentEmail,
                     newPassword: password,
                 }),
             });
@@ -47,8 +47,8 @@ const AccountPage = ({ isLoggedIn, setIsLoggedIn }) => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    oldEmail: currentEmail, 
-                    newEmail: newEmail,     
+                    oldEmail: currentEmail,
+                    newEmail: newEmail,
                 }),
             });
 
@@ -56,8 +56,8 @@ const AccountPage = ({ isLoggedIn, setIsLoggedIn }) => {
 
             if (response.ok) {
                 alert('Email başarıyla güncellendi!');
-                setCurrentEmail(newEmail); 
-                localStorage.setItem('user', JSON.stringify({ email: newEmail })); 
+                setCurrentEmail(newEmail);
+                localStorage.setItem('user', JSON.stringify({ email: newEmail }));
                 setNewEmail('');
             } else {
                 alert(`Hata: ${data.message}`);
@@ -73,24 +73,24 @@ const AccountPage = ({ isLoggedIn, setIsLoggedIn }) => {
         const confirmDelete = window.confirm(
             'Hesabınızı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!'
         );
-    
+
         if (!confirmDelete) {
             return;
         }
-    
+
         try {
             const response = await fetch('http://localhost:5000/delete-account', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: currentEmail }),
             });
-    
+
             const data = await response.json();
-    
+
             if (response.ok) {
                 alert('Hesabınız başarıyla silindi.');
-                localStorage.removeItem('user'); 
-                setIsLoggedIn(false); 
+                localStorage.removeItem('user');
+                setIsLoggedIn(false);
                 navigate('/');
             } else {
                 alert(`Hata: ${data.message}`);
@@ -100,7 +100,7 @@ const AccountPage = ({ isLoggedIn, setIsLoggedIn }) => {
             alert('Hesap silinirken bir hata oluştu.');
         }
     };
-    
+
     return (
         <Layout isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}>
             <div style={styles.container}>
@@ -141,7 +141,7 @@ const AccountPage = ({ isLoggedIn, setIsLoggedIn }) => {
                 </div>
 
                 {/* Hesabı Silme Butonu */}
-                <button onClick = {handleAccountDelete} style={styles.deleteButton}>
+                <button onClick={handleAccountDelete} style={styles.deleteButton}>
                     Hesabı Sil
                 </button>
             </div>

@@ -56,18 +56,7 @@ const LoginPage = ({ setIsLoggedIn }) => {
             setError('Sunucuyla bağlantı kurulamadı. Lütfen daha sonra tekrar deneyin.');
         }
     };
-    
 
-    
-    // const saveUserInfo = (email) => {
-    //     try {
-    //         const userInfo = { email: email, password: password};
-    //         localStorage.setItem('user', JSON.stringify(userInfo));
-    //         console.log('Kullanıcı bilgisi kaydedildi:', userInfo);
-    //     } catch (err) {
-    //         console.error('Kullanıcı bilgisi kaydedilemedi:', err);
-    //     }
-    // };
     
 
     return (
