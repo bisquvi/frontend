@@ -11,6 +11,8 @@ import Header from './Header';
 import AdminHome from './AdminHome';
 import AdminPage from './AdminPage';
 import ProductPage from './ProductPage';
+import LogoutPage from './logoutPage';
+
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -70,6 +72,11 @@ const App = () => {
         <Route
           path="/login"
           element={<LoginPage setIsLoggedIn={setIsLoggedIn} />}
+        />
+
+        <Route
+          path="/logout"
+          element={<LogoutPage setIsLoggedIn={setIsLoggedIn} />}
         />
 
         <Route

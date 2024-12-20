@@ -6,11 +6,42 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
     const navigate = useNavigate();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-    const handleLogout = () => {
-        setIsLoggedIn(false);
-        navigate('/');
+    const handleLogout = async () => {
+        const user = JSON.parse(localStorage.getItem('user'));
+    
+        if (!user || !user.id) {
+            console.error('Kullanıcı bilgileri bulunamadı ya da eksik.');
+            return;
+        }
+    
+        try {
+            const response = await fetch('http://localhost:5000/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ user_id: user.id }),
+            });
+    
+            const data = await response.json();
+    
+            if (response.ok) {
+                console.log('Logout başarılı:', data.message);
+                localStorage.removeItem('user');
+                setIsLoggedIn(false);
+                navigate('/');
+            } else {
+                console.error('Logout sırasında hata oluştu:', data.error);
+            }
+        } catch (err) {
+            console.error('Logout işlemi sırasında hata oluştu:', err);
+        }
     };
-
+    
+    
+// const handleLogout = () => {
+    //     setIsLoggedIn(false);
+    //     navigate('/');
     return (
         <div className="header-container">
             <div className="header">
