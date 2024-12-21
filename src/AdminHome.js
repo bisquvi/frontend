@@ -4,18 +4,19 @@ import { useNavigate } from "react-router-dom";
 const AdminHome = () => {
   const [hovered, setHovered] = useState(null);
   const [users, setUsers] = useState([]);
+  const [logs, setLogs] = useState([]);
+  const [admins, setAdmins] = useState([]);
   const [selectedTab, setSelectedTab] = useState(null);
   const [newAdminUsername, setNewAdminUsername] = useState("");
   const [newAdminPassword, setNewAdminPassword] = useState("");
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   useEffect(() => {
     const isAdminLoggedIn = localStorage.getItem("adminLoggedIn") === "true";
     if (!isAdminLoggedIn) {
-      navigate("/admin"); 
+      navigate("/admin");
     }
   }, [navigate]);
-
 
   const handleMouseEnter = (index) => {
     setHovered(index);
@@ -38,9 +39,34 @@ const AdminHome = () => {
     }
   };
 
+  const fetchLogs = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/logs");
+      if (!response.ok) {
+        throw new Error(`API isteği başarısız oldu, durum kodu: ${response.status}`);
+      }
+      const data = await response.json();
+      setLogs(data);
+    } catch (error) {
+      console.error("Loglar çekilemedi:", error);
+    }
+  };
+
+  const fetchAdmins = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/admins");
+      if (!response.ok) {
+        throw new Error(`API isteği başarısız oldu, durum kodu: ${response.status}`);
+      }
+      const data = await response.json();
+      setAdmins(data);
+    } catch (error) {
+      console.error("Adminler çekilemedi:", error);
+    }
+  };
+
   const deleteUser = async (userId) => {
     try {
-      console.log("Deleting user with ID:", userId);
       const response = await fetch(`http://localhost:5000/api/users/${userId}`, {
         method: "DELETE",
       });
@@ -50,7 +76,6 @@ const AdminHome = () => {
       }
 
       setUsers(users.filter((user) => user.user_id !== userId));
-      console.log(`Kullanıcı ${userId} başarıyla silindi.`);
     } catch (error) {
       console.error("Kullanıcı silinemedi:", error);
     }
@@ -76,7 +101,7 @@ const AdminHome = () => {
       alert("Yeni admin başarıyla eklendi!");
       setNewAdminUsername("");
       setNewAdminPassword("");
-      setSelectedTab("users"); 
+      fetchAdmins();
     } catch (error) {
       console.error("Admin eklenemedi:", error);
     }
@@ -85,6 +110,10 @@ const AdminHome = () => {
   useEffect(() => {
     if (selectedTab === "users") {
       fetchUsers();
+    } else if (selectedTab === "otherManagement") {
+      fetchLogs();
+    } else if (selectedTab === "adminAdd") {
+      fetchAdmins();
     }
   }, [selectedTab]);
 
@@ -128,7 +157,6 @@ const AdminHome = () => {
       <div style={styles.mainContent}>
         <h1 style={styles.header}>Admin Paneli</h1>
 
-        {/* İçerik kısmı */}
         <div style={styles.tabs}>
           {selectedTab === "users" && users.length > 0 ? (
             <ul>
@@ -165,9 +193,50 @@ const AdminHome = () => {
               <button onClick={addAdmin} style={styles.button}>
                 Admin Ekle
               </button>
+              {admins.length > 0 ? (
+                <table style={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>Admin ID</th>
+                      <th>Login</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {admins.map((admin) => (
+                      <tr key={admin.admin_id}>
+                        <td>{admin.admin_id}</td>
+                        <td>{admin.login}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p>Admin bulunamadı.</p>
+              )}
             </div>
-          ) : selectedTab === "otherManagement" ? ( 
-            <p>User Logs</p>
+          ) : selectedTab === "otherManagement" && logs.length > 0 ? (
+            <table style={styles.table}>
+              <thead>
+                <tr>
+                  <th>Log ID</th>
+                  <th>User ID</th>
+                  <th>Activity</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {logs.map((log) => (
+                  <tr key={log.log_id}>
+                    <td>{log.log_id}</td>
+                    <td>{log.user_id}</td>
+                    <td>{log.activity}</td>
+                    <td>{log.log_date}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : selectedTab === "otherManagement" && logs.length === 0 ? (
+            <p>Log bulunamadı.</p>
           ) : (
             <p></p>
           )}
@@ -176,7 +245,6 @@ const AdminHome = () => {
     </div>
   );
 };
-
 const styles = {
   container: {
     display: "flex",

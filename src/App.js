@@ -12,6 +12,8 @@ import AdminHome from './AdminHome';
 import AdminPage from './AdminPage';
 import ProductPage from './ProductPage';
 import LogoutPage from './logoutPage';
+import AttributePage from './AttributePage';
+
 
 
 const App = () => {
@@ -110,11 +112,22 @@ const App = () => {
           }
         />
         <Route
-          path="/:category"
+          path="category/:category_name"
           element={
             <>
               <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
               <CategoryPage />
+            </>
+          }
+        />
+
+         <Route
+          path="/attribute/:attribute_id"
+          element={
+            <>
+
+              <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+              <AttributePage />
             </>
           }
         />
@@ -124,7 +137,7 @@ const App = () => {
           element = {
             <>
               <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-              <ProductPage isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>
+              <ProductPage/>
               </>
           }
         />
