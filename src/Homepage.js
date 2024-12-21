@@ -2,17 +2,35 @@ import React, { useEffect, useState } from 'react';
 import Layout from './Layout';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './styles/Homepage.css';
+import './styles/ProductCard.css';
 
 const Homepage = ({ categories, isLoggedIn, setIsLoggedIn }) => {
     const navigate = useNavigate();
+    const [page,setPage] = useState(1);
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await axios.get('http://localhost:5000/api/products', {
+                    params: { page }
+                });
+                setProducts(response.data);
+                setLoading(false);
+            } catch (error) {
+                console.error('Ürünler alınamadı:', error);
+                setError('Ürünler alınamadı. Lütfen daha sonra tekrar deneyin.');
+                setLoading(false);
+            }
+        };
+        fetchProducts();
+    }, [page]);
+
     // Kategoriye tıklama işlemi
     const handleCategoryClick = (category) => {
-        navigate(`/${category}`);
+        navigate(`category/${category}`);
     };
 
     // Ürüne tıklama işlemi
@@ -60,7 +78,7 @@ const Homepage = ({ categories, isLoggedIn, setIsLoggedIn }) => {
             isLoggedIn={isLoggedIn}
             setIsLoggedIn={setIsLoggedIn}
         >
-            <div className="homepage">
+            <div className="page">
                 <h1>Popüler Ürünler</h1>
 
                 {loading && <p>Yükleniyor...</p>}
@@ -86,6 +104,11 @@ const Homepage = ({ categories, isLoggedIn, setIsLoggedIn }) => {
                     ))}
                 </div>
             </div>
+            <div className="pagination">
+            <button className='button' onClick={() => setPage(page - 1)} disabled={page === 1}>Önceki</button>
+            <span>Sayfa {page}</span>
+            <button className='button' onClick={() => setPage(page + 1)} disabled={products.length < 50}>Sonraki</button>
+        </div>
         </Layout>
     );
 };

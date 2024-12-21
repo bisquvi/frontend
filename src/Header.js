@@ -38,12 +38,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
             console.error('Logout işlemi sırasında hata oluştu:', err);
         }
     };
-    
-    
-    
-// const handleLogout = () => {
-    //     setIsLoggedIn(false);
-    //     navigate('/');
+
     return (
         <div className="header-container">
             <div className="header">
