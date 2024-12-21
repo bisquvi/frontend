@@ -78,7 +78,6 @@ const LoginPage = ({ setIsLoggedIn }) => {
                 setError('');
                 setIsLoggedIn(true);
     
-                // Backend'den dönen tüm kullanıcı bilgilerini localStorage'a kaydet
                 const { user } = data;
                 localStorage.setItem('user', JSON.stringify(user));
     

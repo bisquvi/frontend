@@ -51,13 +51,17 @@ const AccountPage = ({ isLoggedIn, setIsLoggedIn }) => {
                     newEmail: newEmail,
                 }),
             });
-
+    
             const data = await response.json();
-
+    
             if (response.ok) {
                 alert('Email başarıyla güncellendi!');
                 setCurrentEmail(newEmail);
-                localStorage.setItem('user', JSON.stringify({ email: newEmail }));
+    
+                // Kullanıcı bilgilerini güncelle
+                const updatedUser = { ...JSON.parse(localStorage.getItem('user')), email: newEmail };
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+    
                 setNewEmail('');
             } else {
                 alert(`Hata: ${data.message}`);
@@ -67,6 +71,7 @@ const AccountPage = ({ isLoggedIn, setIsLoggedIn }) => {
             alert('Email güncellenirken bir hata oluştu.');
         }
     };
+    
 
 
     const handleAccountDelete = async () => {

@@ -10,7 +10,8 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
         const user = JSON.parse(localStorage.getItem('user'));
     
         if (!user || !user.id) {
-            console.error('Kullanıcı bilgileri bulunamadı ya da eksik.');
+            console.error('Kullanıcı bilgileri bulunamadı ya da eksik. Lütfen tekrar giriş yapın.');
+            alert('Kullanıcı bilgileri bulunamadı. Lütfen tekrar giriş yapın.');
             return;
         }
     
@@ -27,9 +28,9 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
     
             if (response.ok) {
                 console.log('Logout başarılı:', data.message);
-                localStorage.removeItem('user');
-                setIsLoggedIn(false);
-                navigate('/');
+                localStorage.removeItem('user'); // Kullanıcı bilgilerini kaldır
+                setIsLoggedIn(false); // Oturum durumu değiştir
+                navigate('/'); // Ana sayfaya yönlendir
             } else {
                 console.error('Logout sırasında hata oluştu:', data.error);
             }
@@ -37,6 +38,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
             console.error('Logout işlemi sırasında hata oluştu:', err);
         }
     };
+    
     
     
 // const handleLogout = () => {
