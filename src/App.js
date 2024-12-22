@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Homepage from './Homepage';
 import CategoryPage from './CategoryPage';
@@ -8,17 +8,19 @@ import SignupPage from './SignupPage';
 import AccountPage from './AccountPage';
 import FavoritesPage from './FavoritesPage';
 import Header from './Header';
+import AttributePage from './AttributePage';
+import ProductPage from './ProductPage';
 import AdminHome from './AdminHome';
 import AdminPage from './AdminPage';
-import ProductPage from './ProductPage';
-import LogoutPage from './logoutPage';
-import AttributePage from './AttributePage';
-
-
+import Layout from './Layout';
+import LogoutPage from './LogoutPage';
+import Sidebar from './Sidebar';
+import Footer from './Footer';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [categories, setCategories] = useState([]); // Kategoriler state'i
+  const [userId, setUserId] = useState(null); // Store user ID
+  const [categories, setCategories] = useState([]);
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -44,106 +46,120 @@ const App = () => {
     };
     fetchUsers();
   }, []);
-  
 
   return (
     <Router>
+      <HeaderWrapper isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
       <Routes>
         <Route
           path="/"
           element={
-            <>
-              <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-              <Homepage
-                isLoggedIn={isLoggedIn}
-                setIsLoggedIn={setIsLoggedIn}
-                categories={categories}
-              />
-            </>
+            <Layout sidebarContent={<SidebarContent categories={categories} />}>
+              <Homepage isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} categories={categories} />
+            </Layout>
+          }
+        />
+        <Route
+          path="/login"
+          element={<LoginPage setIsLoggedIn={setIsLoggedIn} setUserId={setUserId} />}
+        />
+        <Route
+          path="/signup"
+          element={<SignupPage setIsLoggedIn={setIsLoggedIn} setUserId={setUserId} />}
+        />
+        <Route
+          path="/logout"
+          element={<LogoutPage setIsLoggedIn={setIsLoggedIn} setUserId={setUserId}/>}
+        />
+        <Route
+          path="/account"
+          element={
+            <Layout sidebarContent={<SidebarContent categories={categories} />}>
+              <AccountPage categories={categories} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+            </Layout>
+          }
+        />
+        <Route
+          path="/favorites"
+          element={
+            <Layout sidebarContent={<SidebarContent categories={categories} />}>
+              <FavoritesPage categories={categories} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+            </Layout>
           }
         />
         <Route
           path="/admin"
           element={<AdminPage />}
         />
-        
-        <Route path="/admin/home" 
-        element={<AdminHome />}
-         />
-         
         <Route
-          path="/login"
-          element={<LoginPage setIsLoggedIn={setIsLoggedIn} />}
-        />
-
-        <Route
-          path="/logout"
-          element={<LogoutPage setIsLoggedIn={setIsLoggedIn} />}
-        />
-
-        <Route
-          path="/signup"
-          element={<SignupPage setIsLoggedIn={setIsLoggedIn} />}
+          path="/admin/home"
+          element={<AdminHome />}
         />
         <Route
-          path="/account"
+          path="/category/:category_name"
           element={
-            <>
-              <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-              <AccountPage
-                categories={categories}
-                isLoggedIn={isLoggedIn}
-                setIsLoggedIn={setIsLoggedIn}
-              />
-            </>
-          }
-        />
-        <Route
-          path="/favorites"
-          element={
-            <>
-              <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-              <FavoritesPage
-                categories={categories}
-                isLoggedIn={isLoggedIn}
-                setIsLoggedIn={setIsLoggedIn}
-              />
-            </>
-          }
-        />
-        <Route
-          path="category/:category_name"
-          element={
-            <>
-              <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+            <Layout sidebarContent={<SidebarContent categories={categories} />}>
               <CategoryPage />
-            </>
+            </Layout>
           }
         />
-
-         <Route
+        <Route
           path="/attribute/:attribute_id"
           element={
-            <>
-
-              <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-              <AttributePage />
-            </>
+            <Layout sidebarContent={<SidebarContent categories={categories} />}>
+              <AttributePage isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+            </Layout>
           }
         />
-
         <Route
-          path='/products/:productId'
-          element = {
-            <>
-              <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-              <ProductPage/>
-              </>
+          path="/products/:productId"
+          element={
+            <Layout>
+              <ProductPage isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} userId={userId} />
+            </Layout>
           }
         />
       </Routes>
+      <FooterWrapper />
     </Router>
   );
 };
+
+const HeaderWrapper = ({ isLoggedIn, setIsLoggedIn }) => {
+  const location = useLocation();
+  const hideHeaderPaths = ['/login', '/signup', '/admin', '/admin/home'];
+
+  const shouldHideHeader = hideHeaderPaths.some(path => location.pathname.startsWith(path));
+
+  if (shouldHideHeader) {
+    return null;
+  }
+
+  return <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />;
+};
+
+
+const FooterWrapper = () => {
+  const location = useLocation();
+  const hideFooterPaths = ['/admin','/admin/home'];
+
+  const shouldHideFooter = hideFooterPaths.some(path=> location.pathname.startsWith(path));
+
+  if(shouldHideFooter) {
+    return null;
+  }
+  return <Footer />
+}
+
+const SidebarContent = ({ categories }) => (
+  <div>
+    <h3>Kategoriler</h3>
+    <ul>
+      {categories.map((category, index) => (
+        <li key={index}>{category}</li>
+      ))}
+    </ul>
+  </div>
+);
 
 export default App;

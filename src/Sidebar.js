@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './styles/Sidebar.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Sidebar = ({ content, backButtonPath }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(() => {
@@ -8,6 +8,7 @@ const Sidebar = ({ content, backButtonPath }) => {
         return savedState === 'true';
     });
     const navigate = useNavigate();
+    const location = useLocation();
 
     const toggleMenu = () => {
         const newState = !isMenuOpen;
@@ -22,6 +23,10 @@ const Sidebar = ({ content, backButtonPath }) => {
             navigate('/');
         }
     };
+
+    useEffect(() => {
+        setIsMenuOpen(false);
+    }, [location.pathname]);
 
     return (
         <>

@@ -68,7 +68,7 @@ const AdminHome = () => {
   const deleteUser = async (userId) => {
     try {
       const response = await fetch(`http://localhost:5000/api/users/${userId}`, {
-        method: "DELETE",
+        method: 'DELETE',
       });
 
       if (!response.ok) {
@@ -77,7 +77,7 @@ const AdminHome = () => {
 
       setUsers(users.filter((user) => user.user_id !== userId));
     } catch (error) {
-      console.error("Kullanıcı silinemedi:", error);
+      console.error('Kullanıcı silinemedi:', error);
     }
   };
 

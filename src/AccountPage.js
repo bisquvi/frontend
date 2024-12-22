@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Layout from './Layout';
 import { useNavigate } from 'react-router-dom';
 
-
 const AccountPage = ({ isLoggedIn, setIsLoggedIn }) => {
     const [currentEmail, setCurrentEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -51,17 +50,17 @@ const AccountPage = ({ isLoggedIn, setIsLoggedIn }) => {
                     newEmail: newEmail,
                 }),
             });
-    
+
             const data = await response.json();
-    
+
             if (response.ok) {
                 alert('Email başarıyla güncellendi!');
                 setCurrentEmail(newEmail);
-    
+
                 // Kullanıcı bilgilerini güncelle
                 const updatedUser = { ...JSON.parse(localStorage.getItem('user')), email: newEmail };
                 localStorage.setItem('user', JSON.stringify(updatedUser));
-    
+
                 setNewEmail('');
             } else {
                 alert(`Hata: ${data.message}`);
@@ -71,8 +70,6 @@ const AccountPage = ({ isLoggedIn, setIsLoggedIn }) => {
             alert('Email güncellenirken bir hata oluştu.');
         }
     };
-    
-
 
     const handleAccountDelete = async () => {
         const confirmDelete = window.confirm(
@@ -103,6 +100,36 @@ const AccountPage = ({ isLoggedIn, setIsLoggedIn }) => {
         } catch (error) {
             console.error('Hesap silinirken bir hata oluştu:', error);
             alert('Hesap silinirken bir hata oluştu.');
+        }
+    };
+
+    const handleLogout = async () => {
+        const userInfo = JSON.parse(localStorage.getItem('user'));
+        if (!userInfo || !userInfo.user_id) {
+            alert('Kullanıcı bilgileri bulunamadı.');
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:5000/logout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userInfo.user_id }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert('Çıkış başarılı.');
+                localStorage.removeItem('user');
+                setIsLoggedIn(false);
+                navigate('/');
+            } else {
+                alert(`Hata: ${data.message}`);
+            }
+        } catch (error) {
+            console.error('Çıkış yapılırken bir hata oluştu:', error);
+            alert('Çıkış yapılırken bir hata oluştu.');
         }
     };
 
@@ -149,6 +176,11 @@ const AccountPage = ({ isLoggedIn, setIsLoggedIn }) => {
                 <button onClick={handleAccountDelete} style={styles.deleteButton}>
                     Hesabı Sil
                 </button>
+
+                {/* Çıkış Yapma Butonu */}
+                <button onClick={handleLogout} style={styles.logoutButton}>
+                    Çıkış Yap
+                </button>
             </div>
         </Layout>
     );
@@ -185,7 +217,14 @@ const styles = {
         cursor: 'pointer',
         marginTop: '30px',
     },
+    logoutButton: {
+        padding: '15px 30px',
+        backgroundColor: '#007bff',
+        color: 'white',
+        border: 'none',
+        cursor: 'pointer',
+        marginTop: '30px',
+    },
 };
 
 export default AccountPage;
-

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const LoginPage = ({ setIsLoggedIn }) => {
+const LoginPage = ({ setIsLoggedIn, setUserId }) => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -26,43 +26,12 @@ const LoginPage = ({ setIsLoggedIn }) => {
         };
     }, []);
 
-    // const handleLogin = async () => {
-    //     if (!email.trim() || !password.trim()) {
-    //         setError('E-posta ve şifre boş bırakılamaz.');
-    //         return;
-    //     }
-
-    //     try {
-    //         const response = await fetch('http://localhost:5000/login', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify({ email, password }),
-    //         });
-
-    //         const data = await response.json();
-
-    //         if (response.ok && data.message === 'Login başarılı.') {
-    //             setError('');
-    //             setIsLoggedIn(true);
-    //             localStorage.setItem('user', JSON.stringify({ email }));
-    //             navigate('/');
-    //         } else {
-    //             setError(data.error || 'Geçersiz e-posta veya şifre.');
-    //         }
-    //     } catch (err) {
-    //         console.error('Login işlemi sırasında hata oluştu:', err);
-    //         setError('Sunucuyla bağlantı kurulamadı. Lütfen daha sonra tekrar deneyin.');
-    //     }
-    // };
-
     const handleLogin = async () => {
         if (!email.trim() || !password.trim()) {
-            setError('E-posta ve şifre boş bırakılamaz.');
+            setError('Şifre ve kullanıcı adı boş bırakılamaz.');
             return;
         }
-    
+
         try {
             const response = await fetch('http://localhost:5000/login', {
                 method: 'POST',
@@ -71,26 +40,24 @@ const LoginPage = ({ setIsLoggedIn }) => {
                 },
                 body: JSON.stringify({ email, password }),
             });
-    
+
             const data = await response.json();
-    
-            if (response.ok && data.message === 'Login başarılı.') {
+
+            if (response.ok) {
                 setError('');
                 setIsLoggedIn(true);
-    
-                const { user } = data;
-                localStorage.setItem('user', JSON.stringify(user));
-    
+                localStorage.setItem('token', data.token); // Store JWT token
+                localStorage.setItem('user', JSON.stringify({ email, user_id: data.user_id })); // Store user info
+                setUserId(data.user_id); // Set user ID
                 navigate('/');
             } else {
-                setError(data.error || 'Geçersiz e-posta veya şifre.');
+                setError(data.message || 'Kullanıcı adı veya şifre yanlış.');
             }
         } catch (err) {
-            console.error('Login işlemi sırasında hata oluştu:', err);
-            setError('Sunucuyla bağlantı kurulamadı. Lütfen daha sonra tekrar deneyin.');
+            console.error('Error during login:', err); // Hata hakkında daha fazla bilgi almak için
+            setError('Sunucuyla bağlantı kurulamadı.');
         }
     };
-    
 
     return (
         <div

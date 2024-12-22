@@ -72,7 +72,10 @@ const Homepage = ({ categories, isLoggedIn, setIsLoggedIn }) => {
     }, []);
 
     return (
+        
         <Layout
+        
+        
             sidebarContent={sidebarContent}
             isBackButtonVisible={false} // Geri Dön tuşu ana sayfada görünmez
             isLoggedIn={isLoggedIn}

@@ -9,7 +9,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
     const handleLogout = async () => {
         const user = JSON.parse(localStorage.getItem('user'));
     
-        if (!user || !user.id) {
+        if (!user || !user.user_id) {
             console.error('Kullanıcı bilgileri bulunamadı ya da eksik. Lütfen tekrar giriş yapın.');
             alert('Kullanıcı bilgileri bulunamadı. Lütfen tekrar giriş yapın.');
             return;
@@ -21,7 +21,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ user_id: user.id }),
+                body: JSON.stringify({ user_id: user.user_id }),
             });
     
             const data = await response.json();

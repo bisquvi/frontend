@@ -4,14 +4,14 @@ import Layout from './Layout';
 import axios from 'axios';
 import './styles/ProductCard.css';
 
-const AttributePage = () => {
+const AttributePage = ({ isLoggedIn, setIsLoggedIn }) => {
     const { attribute_id } = useParams();
     const [products, setProducts] = useState([]);
     const [categoryName, setCategoryName] = useState('');
     const [attributeName, setAttributeName] = useState('');
     const [subcategoryId, setSubcategoryId] = useState(null);
     const [subcategoryAttributes, setSubcategoryAttributes] = useState([]);
-    const [orderByClause, setorderByClause] = useState('popularity');
+    const [orderByClause, setOrderByClause] = useState('popularity');
     const [sortOrder, setSortOrder] = useState('desc');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -86,7 +86,7 @@ const AttributePage = () => {
 
     const handleSortChange = (e) => {
         const [orderby, order] = e.target.value.split(',');
-        setorderByClause(orderby);
+        setOrderByClause(orderby);
         setSortOrder(order);
     };
 
