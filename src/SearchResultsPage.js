@@ -1,25 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation,useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './styles/ProductCard.css';
 import Layout from './Layout';
 
-const SearchResultsPage = ({categories}) => {
+const SearchResultsPage = ({ categories }) => {
     const location = useLocation();
     const navigate = useNavigate(); 
 
     const query = new URLSearchParams(location.search).get('query');
+    const page = parseInt(new URLSearchParams(location.search).get('page')) || 1;
     const [searchResults, setSearchResults] = useState([]);
-    const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [products] = useState([]);
+    const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
         const fetchSearchResults = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/search?query=${query}`);
+                const response = await axios.get(`http://localhost:5000/search?query=${query}&page=${page}`);
                 setSearchResults(response.data.products);
+                setTotalPages(response.data.totalPages);
                 setLoading(false);
             } catch (error) {
                 console.error('Search failed:', error);
@@ -31,7 +32,19 @@ const SearchResultsPage = ({categories}) => {
         if (query) {
             fetchSearchResults();
         }
-    }, [query]);
+    }, [query, page]);
+
+    const handleCategoryClick = (category) => {
+        navigate(`category/${category}`);
+    };
+
+    const handleProductClick = (productId) => {
+        navigate(`/products/${productId}`);
+    };
+
+    const handlePageChange = (newPage) => {
+        navigate(`/search?query=${query}&page=${newPage}`);
+    };
 
     const sidebarContent = (
         <>
@@ -49,14 +62,6 @@ const SearchResultsPage = ({categories}) => {
             </ul>
         </>
     );
-
-    const handleCategoryClick = (category) => {
-        navigate(`category/${category}`);
-    };
-
-    const handleProductClick = (productId) => {
-        navigate(`/products/${productId}`);
-    };
 
     return (
         <Layout
@@ -89,7 +94,7 @@ const SearchResultsPage = ({categories}) => {
                 <div className="pagination">
                     <button
                         className="button"
-                        onClick={() => setPage(page - 1)}
+                        onClick={() => handlePageChange(page - 1)}
                         disabled={page === 1}
                     >
                         Önceki
@@ -97,14 +102,13 @@ const SearchResultsPage = ({categories}) => {
                     <span>Sayfa {page}</span>
                     <button
                         className="button"
-                        onClick={() => setPage(page + 1)}
-                        disabled={products.length < 50}
+                        onClick={() => handlePageChange(page + 1)}
+                        disabled={page >= totalPages}
                     >
                         Sonraki
-                    </button>
+                    </button> 
                 </div>
             </div>
-
         </Layout>
     );
 };
