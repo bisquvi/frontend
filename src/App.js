@@ -16,12 +16,23 @@ import Layout from './Layout';
 import LogoutPage from './LogoutPage';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
+import SearchResultsPage from './SearchResultsPage';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userId, setUserId] = useState(null); // Store user ID
   const [categories, setCategories] = useState([]);
   const [users, setUsers] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
+  const [query, setQuery] = useState('');
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+      setIsLoggedIn(true);
+      setUserId(user.user_id);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -47,15 +58,35 @@ const App = () => {
     fetchUsers();
   }, []);
 
+  useEffect(() => {
+    const fetchSearchResults = async () => {
+      if (query) {
+        try {
+          const response = await axios.get(`http://localhost:5000/api/search?query=${query}`);
+          setSearchResults(response.data.products);
+        } catch (error) {
+          console.error('Error fetching search results:', error);
+        }
+      }
+    };
+    fetchSearchResults();
+  }, [query]); // Depend on query so it runs when the query changes
+
   return (
     <Router>
-      <HeaderWrapper isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+      <HeaderWrapper isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} setSearchResults={setSearchResults} searchResults={searchResults} setQuery={setQuery} />
       <Routes>
         <Route
           path="/"
           element={
             <Layout sidebarContent={<SidebarContent categories={categories} />}>
-              <Homepage isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} categories={categories} />
+              <Homepage
+                isLoggedIn={isLoggedIn}
+                setIsLoggedIn={setIsLoggedIn}
+                categories={categories}
+                searchResults={searchResults}
+                setSearchResults={setSearchResults}
+              />
             </Layout>
           }
         />
@@ -69,7 +100,7 @@ const App = () => {
         />
         <Route
           path="/logout"
-          element={<LogoutPage setIsLoggedIn={setIsLoggedIn} setUserId={setUserId}/>}
+          element={<LogoutPage setIsLoggedIn={setIsLoggedIn} setUserId={setUserId} />}
         />
         <Route
           path="/account"
@@ -119,13 +150,21 @@ const App = () => {
             </Layout>
           }
         />
+        <Route
+          path="/search"
+          element={
+            <Layout sidebarContent={<SidebarContent categories={categories} />}>
+              <SearchResultsPage categories={categories} />
+            </Layout>
+          }
+        />
       </Routes>
       <FooterWrapper />
     </Router>
   );
 };
 
-const HeaderWrapper = ({ isLoggedIn, setIsLoggedIn }) => {
+const HeaderWrapper = ({ isLoggedIn, setIsLoggedIn, setSearchResults, searchResults, setQuery }) => {
   const location = useLocation();
   const hideHeaderPaths = ['/login', '/signup', '/admin', '/admin/home'];
 
@@ -135,17 +174,21 @@ const HeaderWrapper = ({ isLoggedIn, setIsLoggedIn }) => {
     return null;
   }
 
-  return <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />;
+  return <Header isLoggedIn={isLoggedIn}
+    setIsLoggedIn={setIsLoggedIn}
+    setSearchResults={setSearchResults}
+    searchResults={searchResults}
+    setQuery={setQuery}
+  />;
 };
-
 
 const FooterWrapper = () => {
   const location = useLocation();
-  const hideFooterPaths = ['/admin','/admin/home'];
+  const hideFooterPaths = ['/admin', '/admin/home'];
 
-  const shouldHideFooter = hideFooterPaths.some(path=> location.pathname.startsWith(path));
+  const shouldHideFooter = hideFooterPaths.some(path => location.pathname.startsWith(path));
 
-  if(shouldHideFooter) {
+  if (shouldHideFooter) {
     return null;
   }
   return <Footer />

@@ -2,19 +2,19 @@ import React, { useState } from 'react';
 import './styles/Header.css';
 import { useNavigate } from 'react-router-dom';
 
-const Header = ({ isLoggedIn, setIsLoggedIn }) => {
+const Header = ({ isLoggedIn, setIsLoggedIn, setSearchResults }) => {
     const navigate = useNavigate();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [query, setQuery] = useState('');
 
     const handleLogout = async () => {
         const user = JSON.parse(localStorage.getItem('user'));
-    
         if (!user || !user.user_id) {
             console.error('Kullanıcı bilgileri bulunamadı ya da eksik. Lütfen tekrar giriş yapın.');
             alert('Kullanıcı bilgileri bulunamadı. Lütfen tekrar giriş yapın.');
             return;
         }
-    
+
         try {
             const response = await fetch('http://localhost:5000/logout', {
                 method: 'POST',
@@ -23,14 +23,13 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
                 },
                 body: JSON.stringify({ user_id: user.user_id }),
             });
-    
+
             const data = await response.json();
-    
             if (response.ok) {
                 console.log('Logout başarılı:', data.message);
-                localStorage.removeItem('user'); // Kullanıcı bilgilerini kaldır
-                setIsLoggedIn(false); // Oturum durumu değiştir
-                navigate('/'); // Ana sayfaya yönlendir
+                localStorage.removeItem('user');
+                setIsLoggedIn(false);
+                navigate('/');
             } else {
                 console.error('Logout sırasında hata oluştu:', data.error);
             }
@@ -39,11 +38,27 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
         }
     };
 
+    const handleSearch = (e) => {
+        if (e.key === 'Enter') {
+            navigate(`/search?query=${query}`);
+        }
+    };
+
+
+    
+
     return (
         <div className="header-container">
             <div className="header">
                 <div className="logo">LOGO</div>
-                <input type="text" placeholder="Ürün ara..." className="search-input" />
+                <input
+                    type="text"
+                    placeholder="Ürün ara..."
+                    className="search-input"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    onKeyDown={handleSearch}
+                />
                 {isLoggedIn ? (
                     <div className="account-menu">
                         <button
